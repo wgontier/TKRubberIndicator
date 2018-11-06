@@ -11,7 +11,7 @@ import UIKit
 
 // MARK: - MoveDorection
 // 运动方向
-private enum TKMoveDirection {
+private enum TKMoveDirection{
     case left
     case right
     func toLeft() -> Bool{
@@ -28,7 +28,7 @@ private enum TKMoveDirection {
 // MARK: - TKRubberPageControlConfig
 // 样式配置 (含默认配置)
 
-public struct TKRubberPageControlConfig {
+@objc open class TKRubberPageControlConfig : NSObject   {
     public var smallBubbleSize: CGFloat     // 小球尺寸
     public var mainBubbleSize: CGFloat    // 大球尺寸
     public var bubbleXOffsetSpace: CGFloat     // 小球间距
@@ -39,14 +39,14 @@ public struct TKRubberPageControlConfig {
     public var smallBubbleColor: UIColor    // 小球颜色
     public var bigBubbleColor: UIColor      // 大球颜色
     
-    public init(smallBubbleSize: CGFloat = 16,
+    @objc  public init(smallBubbleSize: CGFloat = 16,
                 mainBubbleSize: CGFloat = 40,
                 bubbleXOffsetSpace: CGFloat = 12,
                 bubbleYOffsetSpace: CGFloat = 8,
                 animationDuration: CFTimeInterval = 0.2,
-                backgroundColor: UIColor = UIColor(red:0.357, green:0.196, blue:0.337, alpha:1.000),
-                smallBubbleColor: UIColor = UIColor(red:0.961, green:0.561, blue:0.518, alpha:1.000),
-                bigBubbleColor: UIColor = UIColor(red:0.788, green:0.216, blue:0.337, alpha:1.000)) {
+                backgroundColor: UIColor = UIColor(red:0.741,  green:0.945,  blue:0.757, alpha:1),
+                smallBubbleColor: UIColor = UIColor(red:1,  green:0.829,  blue:0, alpha:1),
+                bigBubbleColor: UIColor = UIColor(red:1,  green:0.668,  blue:0.474, alpha:1)) {
         self.smallBubbleSize = smallBubbleSize
         self.mainBubbleSize = mainBubbleSize
         self.bubbleXOffsetSpace = bubbleXOffsetSpace
@@ -65,21 +65,21 @@ public struct TKRubberPageControlConfig {
 open class TKRubberPageControl : UIControl {
     
     // 页数
-    open var numberOfpage : Int  = 5 {
+    @objc open var numberOfpage : Int  = 5{
         didSet{
-            if oldValue != numberOfpage {
+            if oldValue != numberOfpage{
                 resetRubberIndicator()
             }
         }
     }
     // 当前 Index
-    open var currentIndex  = 0 {
+    @objc open var currentIndex  = 0 {
         didSet {
             changIndexToValue(currentIndex)
         }
     }
     // 事件闭包
-    open var valueChange  : ((Int) -> Void)?
+    @objc open var valueChange  : ((Int) -> Void)?
     // 样式配置
     open var styleConfig  : TKRubberPageControlConfig {
         didSet {
@@ -105,7 +105,7 @@ open class TKRubberPageControl : UIControl {
     private var yPointEnd    : CGFloat = 0
     
     
-    public init(frame: CGRect, count: Int, config: TKRubberPageControlConfig = TKRubberPageControlConfig()) {
+    @objc public init(frame: CGRect, count: Int, config: TKRubberPageControlConfig = TKRubberPageControlConfig()) {
         numberOfpage = count
         styleConfig = config
         super.init(frame: frame)
@@ -192,7 +192,7 @@ open class TKRubberPageControl : UIControl {
     
     
      // 重置控件
-    open func resetRubberIndicator(){
+    @objc open func resetRubberIndicator(){
         changIndexToValue(0)
         smallBubbles.forEach { $0.removeFromSuperlayer() }
         smallBubbles.removeAll()
@@ -251,7 +251,7 @@ open class TKRubberPageControl : UIControl {
 
         
         // 可以使用 Target-Action 监听事件
-        sendActions(for: UIControlEvents.valueChanged)
+        sendActions(for: UIControl.Event.valueChanged)
         // 也可以使用 闭包 监听事件
         valueChange?(currentIndex)
         
@@ -322,10 +322,10 @@ private class TKBubbleCell: CAShapeLayer, CAAnimationDelegate {
         positionAnimation.duration = duration
         positionAnimation.beginTime = beginTime
         positionAnimation.isAdditive = true;
-        positionAnimation.calculationMode = kCAAnimationPaced;
-        positionAnimation.rotationMode = kCAAnimationRotateAuto;
+        positionAnimation.calculationMode = CAAnimationCalculationMode.paced;
+        positionAnimation.rotationMode = CAAnimationRotationMode.rotateAuto;
         positionAnimation.path = movePath.cgPath
-        positionAnimation.fillMode = kCAFillModeForwards
+        positionAnimation.fillMode = CAMediaTimingFillMode.forwards
         positionAnimation.isRemovedOnCompletion = false
         positionAnimation.delegate = self
         cachePosition = position
@@ -354,7 +354,7 @@ private class TKBubbleCell: CAShapeLayer, CAAnimationDelegate {
                                   NSValue(cgPoint: CGPoint(x: 0, y: -3)),
                                   NSValue(cgPoint: CGPoint(x: 0, y: 0)), ]
         bubbleShakeAnim.repeatCount = 6
-        bubbleShakeAnim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        bubbleShakeAnim.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         bubbleLayer.add(bubbleShakeAnim, forKey: "Shake")
     }
     
